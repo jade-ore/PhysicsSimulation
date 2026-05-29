@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="OpenGLLEarning/OpenGLLEarning.vcxproj" Id="69ac037b-13d0-4363-9c5f-4bcbbf4f38c0" />
+</Solution>
