@@ -22,6 +22,21 @@ public:
 	virtual void render() { };
 };
 
+class Camera {
+public:
+
+	Camera();
+	glm::mat4 get_matrix() {
+		return glm::scale(matrix, glm::vec3(current_scale, current_scale, 1));
+	}
+	void zoom(float amount);
+	void move(glm::vec2 d);
+	
+private:
+	float current_scale;
+	glm::mat4 matrix;
+};
+
 
 class Engine {
 public:
@@ -36,6 +51,7 @@ public:
 	void set_background_color(float r, float g, float b, float a = 1.0f);
 	void add(Shape* shape);
 	Shader shader;
+	Camera camera;
 private:
 	static bool INITIALIZED;
 	bool is_closing;

@@ -1,6 +1,17 @@
 #include "Engine.h"
 #include <iostream>
 
+/*
+NEXT GOALS
+
+Camera
+
+Circle
+
+Transformation
+
+*/
+
 bool Engine::INITIALIZED = false;
 
 void print_mat4(glm::mat4 m) {
@@ -36,7 +47,7 @@ void Engine::initialize(int WIDTH, int HEIGHT) {
     }
 
     shader = Shader("vertex.vs", "fragshader.fs");
-
+    glm::mat4 camera(1);
     INITIALIZED = true;
     is_closing = false;
     glViewport(0, 0, WIDTH, HEIGHT);
@@ -61,8 +72,10 @@ void Engine::render() {
 
     shader.use();
     shader.setVector2f("dimension", glm::vec2(800, 600));
+    shader.setMatrix4f("camera", camera.get_matrix());
    
     for (int i = 0; i < shape_array.size(); i++) {
+
         shader.setMatrix4f("translation", shape_array[i]->Translation);
         
         shader.setVector3f("aColor", shape_array[i]->Color);
@@ -192,3 +205,16 @@ Rectangle::Rectangle(int width, int height, glm::vec2 pos, glm::vec3 col) : Quad
     }, pos, col) {}
 
 Square::Square(int length, glm::vec2 pos, glm::vec3 col) : Rectangle(length, length, pos, col) {}
+
+Camera::Camera() {
+    matrix = glm::mat4(1);
+    current_scale = 1.0f;
+}
+
+void Camera::move(glm::vec2 d) {
+    matrix = glm::translate(matrix, glm::vec3(d, 0));
+}
+
+void Camera::zoom(float amount) {
+    current_scale += amount;
+}
