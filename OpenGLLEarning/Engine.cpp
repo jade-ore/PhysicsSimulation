@@ -123,9 +123,9 @@ Triangle::Triangle(std::array<glm::vec2, 3> triangle_vertices, glm::vec2 pos, gl
 
     Position = pos;
     Color = col;
-
-    Translation = glm::translate(glm::mat4(1), glm::vec3(Position, 0));
-    start_index = vertices_buffer.size() ;
+    Translation = glm::mat4(1);
+    Translation = glm::translate(Translation, glm::vec3(Position, 0));
+    start_index = vertices_buffer.size();
     
     
     for (int i = 0; i < 3; i++) {
