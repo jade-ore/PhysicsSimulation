@@ -12,6 +12,9 @@ int main() {
 	RightTriangle r1(500, 300, glm::vec2(500, 200), glm::vec3(255));
 	Triangle::Push();
 	engine.add(&r1);
+
+	Circle c1(300, glm::vec2(500, 0), glm::vec3(255, 255, 255));
+	Circle::Push();
 	
 	float dt;
 	float last_time = 0.0f;
@@ -46,6 +49,8 @@ int main() {
 		if (engine.is_key_pressed(KEY_O)) {
 			engine.camera.zoom(-dt);
 		}
+
+
 		if (dir != glm::vec2(0)) {
 			engine.camera.move(glm::normalize(dir));
 		}

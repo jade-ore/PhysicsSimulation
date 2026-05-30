@@ -15,7 +15,7 @@ void main() {
 	Pos = camera * translation * Pos;
 
 	// NDC coordinates from here
-	Pos = vec4(Pos.x / dimension.x, Pos.y / dimension.y, 0.0f, 1.0f);
+	Pos = vec4(Pos.xy / dimension, 0.0f, 1.0f);
 	gl_Position = Pos;
 	ourColor = aColor;
 }

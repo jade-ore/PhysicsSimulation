@@ -4,8 +4,6 @@
 /*
 NEXT GOALS
 
-Camera
-
 Circle
 
 Transformation
@@ -18,6 +16,14 @@ void print_mat4(glm::mat4 m) {
     for (int i = 0; i < 4; i++) {
         std::cout << m[0][i] << " " << m[1][i] << " " << m[2][i] << " " << m[3][i] << std::endl;
     }
+}
+
+void print_vec2(glm::vec2 v) {
+    std::cout << v.x << ", " << v.y << std::endl;
+}
+
+void print_vec4(glm::vec4 v ) {
+    std::cout << v.x << ", " << v.y << std::endl;
 }
 
 Engine::Engine(int MAJOR, int MINOR) {
@@ -47,6 +53,7 @@ void Engine::initialize(int WIDTH, int HEIGHT) {
     }
 
     shader = Shader("vertex.vs", "fragshader.fs");
+    instanced_shader = Shader("instvertex.vs", "fragshader.fs");
     glm::mat4 camera(1);
     INITIALIZED = true;
     is_closing = false;
@@ -70,7 +77,15 @@ void Engine::render() {
     glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    if (Circle::isInitialized()) {
+        instanced_shader.use();
+        instanced_shader.setVector2f("dimension", glm::vec2(800, 600));
+        instanced_shader.setMatrix4f("camera", camera.get_matrix());
+        Circle::Render();
+    }
+
     shader.use();
+
     shader.setVector2f("dimension", glm::vec2(800, 600));
     shader.setMatrix4f("camera", camera.get_matrix());
    
@@ -217,4 +232,115 @@ void Camera::move(glm::vec2 d) {
 
 void Camera::zoom(float amount) {
     current_scale += amount;
+}
+
+bool Circle::BUFFERS_INITIALIZED = false;
+unsigned int Circle::amount;
+unsigned int Circle::ColorVBO;
+unsigned int Circle::TransformVBO;
+unsigned int Circle::VertexVBO;
+unsigned int Circle::VAO;
+std::vector<glm::vec3> Circle::colors;
+std::vector<glm::mat4> Circle::transforms;
+
+Circle::Circle(int radius, glm::vec2 pos, glm::vec3 col) {
+
+    Translation = glm::mat4(1);
+
+    if (!BUFFERS_INITIALIZED) {
+        // initialize VBO and VAO
+        glGenBuffers(1, &VertexVBO);
+        glGenBuffers(1, &ColorVBO);
+        glGenBuffers(1, &TransformVBO);
+
+        glGenVertexArrays(1, &VAO);
+
+        // bind VAO and vertex VBO
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VertexVBO);
+
+        // generate points
+        glm::vec2 circle_points[362];
+        circle_points[0] = glm::vec2(0, 0);
+
+        float PI = 3.141592653589793238;
+
+        for (int i = 1; i < 361; i++) {
+            circle_points[i] = glm::vec2(cos(i / 180.0f * PI), sin(i / 180.0f * PI));
+        }
+        
+        // because floating point numbers operations can't be exact, sin(360) will equal a super small number that won't be rendered which is why you go over
+        circle_points[361] = glm::vec2(cos(1 / 180.0f * PI), sin(1 / 180.0f * PI));
+
+        // buffer data into the vertex VBO
+        glBufferData(GL_ARRAY_BUFFER, sizeof(circle_points), circle_points, GL_STATIC_DRAW);
+
+        // enable vertex attribute pointer for vertex VBO
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)(0));
+        glEnableVertexAttribArray(0);
+
+        // bind color VBO
+        glBindBuffer(GL_ARRAY_BUFFER, ColorVBO);
+
+        // enable the vertex attribute pointer for color VBO
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
+        glEnableVertexAttribArray(1);
+
+        // enable vertex attribute pointers for transform VBO
+        glBindBuffer(GL_ARRAY_BUFFER, TransformVBO);
+
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)0);
+        glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(1 * sizeof(glm::vec4)));
+        glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(2 * sizeof(glm::vec4)));
+        glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(3 * sizeof(glm::vec4)));
+
+        glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(3);
+        glEnableVertexAttribArray(4);
+        glEnableVertexAttribArray(5);
+
+        glVertexAttribDivisor(1, 1);
+        glVertexAttribDivisor(2, 1);
+        glVertexAttribDivisor(3, 1);
+        glVertexAttribDivisor(4, 1);
+        glVertexAttribDivisor(5, 1);
+
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        BUFFERS_INITIALIZED = true;
+    }
+    Color = col;
+    Position = pos;
+    start_index = transforms.size();
+
+    Translation = glm::translate(Translation, glm::vec3(pos, 0));
+    Translation = glm::scale(Translation, glm::vec3(radius, radius, 0));
+
+    print_mat4(Translation);
+    colors.push_back(col);
+    transforms.push_back(Translation);
+    amount += 1;
+}
+
+void Circle::Push() {
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, ColorVBO);
+    glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(glm::vec3), colors.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, TransformVBO);
+    glBufferData(GL_ARRAY_BUFFER, transforms.size() * 4 * sizeof(glm::vec4), transforms.data(), GL_STATIC_DRAW);
+
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Circle::Render() {
+    glBindVertexArray(VAO);
+    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 362, amount);
+}
+
+bool Circle::isInitialized() {
+    return BUFFERS_INITIALIZED;
 }

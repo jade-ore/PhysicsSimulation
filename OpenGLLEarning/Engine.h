@@ -12,8 +12,15 @@
 #include <cmath>
 #include <stdexcept>
 
+enum SHAPE_TYPES {
+	CIRCLE,
+	QUAD,
+	TRIANGLE
+};
+
 class Shape {
 public:
+	const int type = 0;
 	Shape() {};
 	Shape(glm::vec2 pos, glm::vec3 col);
 	glm::vec2 Position;
@@ -51,6 +58,7 @@ public:
 	void set_background_color(float r, float g, float b, float a = 1.0f);
 	void add(Shape* shape);
 	Shader shader;
+	Shader instanced_shader;
 	Camera camera;
 private:
 	static bool INITIALIZED;
@@ -61,6 +69,7 @@ private:
 
 class Triangle : public Shape {
 public:	
+	const int type = TRIANGLE;
 	Triangle() {};
 	Triangle(std::array<glm::vec2, 3> triangle_vertices, glm::vec2 pos, glm::vec3 col);
 	static std::vector<glm::vec2> vertices_buffer;
@@ -82,6 +91,7 @@ public:
 
 class Quad : public Shape {
 public:
+	const int type = QUAD;
 	Quad(std::array<glm::vec2, 4> quad_vertices, glm::vec2 pos, glm::vec3 col);
 	Triangle* t1;
 	Triangle* t2;
@@ -96,4 +106,24 @@ public:
 class Square : public Rectangle {
 public:
 	Square(int length, glm::vec2 pos, glm::vec3 col);
+};
+
+class Circle : public Shape {
+public:
+	const int type = CIRCLE;
+	Circle(int radius, glm::vec2 pos, glm::vec3 col);
+	static void Render();
+	static void Push();
+	static void Update();
+	static std::vector<glm::vec3> colors;
+	static std::vector<glm::mat4> transforms;
+	static bool isInitialized();
+private:
+	int start_index;
+	static unsigned int amount;
+	static unsigned int VertexVBO;
+	static unsigned int ColorVBO;
+	static unsigned int TransformVBO;
+	static unsigned int VAO;
+	static bool BUFFERS_INITIALIZED;
 };
