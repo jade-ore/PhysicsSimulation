@@ -1,13 +1,6 @@
 #include "Engine.h"
 #include <iostream>
 
-/*
-NEXT GOALS
-
-Transformation
-
-*/
-
 bool Engine::INITIALIZED = false;
 
 void print_mat4(glm::mat4 m) {
