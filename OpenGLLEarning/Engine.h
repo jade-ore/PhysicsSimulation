@@ -26,7 +26,9 @@ public:
 	glm::vec2 Position;
 	glm::vec3 Color;
 	glm::mat4 Translation;
-	virtual void render() { };
+	virtual void render() {};
+	virtual void transform(glm::vec2 v, float theta = 0.0f) {};
+	virtual void set_color(glm::vec3 c) {};
 };
 
 class Camera {
@@ -57,6 +59,7 @@ public:
 	void set_background_color(glm::vec3 c);
 	void set_background_color(float r, float g, float b, float a = 1.0f);
 	void add(Shape* shape);
+	void PushInformation();
 	Shader shader;
 	Shader instanced_shader;
 	Camera camera;
@@ -75,7 +78,9 @@ public:
 	static std::vector<glm::vec2> vertices_buffer;
 	void render();
 	static void Push();
-	static void Update();
+	void transform(glm::vec2 v, float theta = 0.0f);
+	static bool is_initialized();
+	void set_color(glm::vec3 c);
 private:
 	int start_index;
 	static bool INITIALIZED;
@@ -96,6 +101,8 @@ public:
 	Triangle* t1;
 	Triangle* t2;
 	void render();
+	void transform(glm::vec2 v, float theta = 0.0f);
+	void set_color(glm::vec3 c);
 };
 
 class Rectangle : public Quad {
@@ -117,7 +124,9 @@ public:
 	static void Update();
 	static std::vector<glm::vec3> colors;
 	static std::vector<glm::mat4> transforms;
-	static bool isInitialized();
+	static bool is_initialized();
+	void transform(glm::vec2 v, float theta = 0.0f);
+	void set_color(glm::vec3 c);
 private:
 	int start_index;
 	static unsigned int amount;

@@ -4,8 +4,6 @@
 /*
 NEXT GOALS
 
-Circle
-
 Transformation
 
 */
@@ -77,7 +75,7 @@ void Engine::render() {
     glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    if (Circle::isInitialized()) {
+    if (Circle::is_initialized()) {
         instanced_shader.use();
         instanced_shader.setVector2f("dimension", glm::vec2(800, 600));
         instanced_shader.setMatrix4f("camera", camera.get_matrix());
@@ -168,18 +166,9 @@ void Triangle::Push() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Triangle::Update() {
-    glBindBuffer(GL_ARRAY_BUFFER, VertexVBO);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices_buffer), vertices_buffer.data());
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
 void Triangle::render() {
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, start_index, 3);
-    
-
 }
 
 RightTriangle::RightTriangle(int width, int height, glm::vec2 pos, glm::vec3 col) : Triangle({
@@ -341,6 +330,55 @@ void Circle::Render() {
     glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 362, amount);
 }
 
-bool Circle::isInitialized() {
+bool Circle::is_initialized() {
     return BUFFERS_INITIALIZED;
+}
+
+bool Triangle::is_initialized() {
+    return INITIALIZED;
+}
+
+void Triangle::transform(glm::vec2 v, float theta) {
+    Translation = glm::translate(Translation, glm::vec3(v, 0));
+    Translation = glm::rotate(Translation, glm::radians(theta), glm::vec3(0, 0, 1));
+}
+
+void Quad::transform(glm::vec2 v, float theta) {
+    t1->transform(v, theta);
+    t2->transform(v, theta);
+}
+
+void Circle::transform(glm::vec2 v, float theta) {
+    transforms[start_index] = glm::translate(transforms[start_index], glm::vec3(v, 0));
+}
+
+void Circle::Update() {
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, TransformVBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, transforms.size() * sizeof(glm::mat4), transforms.data());
+
+    glBindBuffer(GL_ARRAY_BUFFER, ColorVBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, colors.size() * sizeof(glm::vec3), colors.data());
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Engine::PushInformation() {
+    if (Triangle::is_initialized()) Triangle::Push();
+    if (Circle::is_initialized()) Circle::Push();
+}
+
+void Triangle::set_color(glm::vec3 c) {
+    Color = c;
+}
+
+void Quad::set_color(glm::vec3 c) {
+    t1->set_color(c);
+    t2->set_color(c);
+}
+
+void Circle::set_color(glm::vec3 c) {
+    Color = c;
+    colors[start_index] = c;
 }

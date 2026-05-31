@@ -14,6 +14,7 @@ int main() {
 	engine.add(&r1);
 
 	Circle c1(300, glm::vec2(500, 0), glm::vec3(255, 255, 255));
+
 	Circle::Push();
 	
 	float dt;
@@ -30,31 +31,37 @@ int main() {
 			engine.close();
 		}
 
+		float theta = 0.0f;
+
 		glm::vec2 dir(0);
+
 		if (engine.is_key_pressed(KEY_W)) {
-			dir += glm::vec2(0,-1);
-		}
-		if (engine.is_key_pressed(KEY_S)) {
 			dir += glm::vec2(0,1);
 		}
-		if (engine.is_key_pressed(KEY_A)) {
-			dir += glm::vec2(1,0);
+		if (engine.is_key_pressed(KEY_S)) {
+			dir += glm::vec2(0,-1);
 		}
-		if (engine.is_key_pressed(KEY_D)) {
+		if (engine.is_key_pressed(KEY_A)) {
 			dir += glm::vec2(-1,0);
 		}
+		if (engine.is_key_pressed(KEY_D)) {
+			dir += glm::vec2(1,0);
+		}
 		if (engine.is_key_pressed(KEY_I)) {
-			engine.camera.zoom(dt);
+			theta = 5;
 		}
 		if (engine.is_key_pressed(KEY_O)) {
-			engine.camera.zoom(-dt);
+			theta = -5;
 		}
-
 
 		if (dir != glm::vec2(0)) {
-			engine.camera.move(glm::normalize(dir));
+			c1.set_color(c1.Color + glm::vec3(dir.x * 50, dir.y * 50, 0));
+		}
+		if (theta) {
+			r1.transform(glm::vec2(0), theta);
 		}
 
+		Circle::Update();
 		engine.render(); // draws bg
 
 	}
@@ -62,3 +69,5 @@ int main() {
 	engine.close();
 	return 0;
 }
+
+
