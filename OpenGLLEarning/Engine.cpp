@@ -43,8 +43,48 @@ void Engine::initialize(int WIDTH, int HEIGHT) {
         return;
     }
 
-    shader = Shader("vertex.vs", "fragshader.fs");
-    instanced_shader = Shader("instvertex.vs", "fragshader.fs");
+    const char* vertexshader = "#version 330 core\n"
+        "layout(location = 0) in vec2 aPos;\n"
+        "out vec3 ourColor;\n"
+        "uniform vec3 aColor;\n"
+        "uniform vec2 dimension;\n"
+        "uniform mat4 translation;\n"
+        "uniform mat4 camera;\n"
+        "void main() {\n"
+        "vec4 Pos = vec4(aPos, 0.0, 1.0);\n"
+        "Pos = camera * translation * Pos;\n"
+        // NDC coordinates from here
+        "Pos = vec4(Pos.xy / dimension, 0.0f, 1.0f);\n"
+        "gl_Position = Pos;\n"
+        "ourColor = aColor;\n"
+        "}\0";
+
+    const char* instvertexshader = "#version 330 core\n"
+        "layout(location = 0) in vec2 aPos;\n"
+        "layout(location = 1) in vec3 aColor;\n"
+        "layout(location = 2) in mat4 transform;\n"
+        "uniform mat4 camera;\n"
+        "uniform vec2 dimension;\n"
+        "out vec3 ourColor;\n"
+        "void main() {\n"
+        "vec4 Pos = camera * transform * vec4(aPos, 0.0f, 1.0f);\n"
+        // NDC coords from here
+        "gl_Position = vec4(Pos.xy / dimension, 0.0f, 1.0f);\n"
+        "ourColor = aColor;\n"
+        "}\0";
+
+    const char* fragshader = "#version 330 core\n"
+        "in vec3 ourColor;\n"
+        "out vec4 FragColor;\n"
+        "void main() {\n"
+        "FragColor = vec4(ourColor.r / 255, ourColor.g / 255, ourColor.b / 255, 1.0f);\n"
+        "}\0";
+    
+    shader = Shader(vertexshader, fragshader);
+
+    instanced_shader = Shader(instvertexshader, fragshader);
+
+
     glm::mat4 camera(1);
     INITIALIZED = true;
     is_closing = false;
@@ -299,7 +339,6 @@ Circle::Circle(int radius, glm::vec2 pos, glm::vec3 col) {
     Translation = glm::translate(Translation, glm::vec3(pos, 0));
     Translation = glm::scale(Translation, glm::vec3(radius, radius, 0));
 
-    print_mat4(Translation);
     colors.push_back(col);
     transforms.push_back(Translation);
     amount += 1;
