@@ -1,0 +1,53 @@
+[33mcommit 961d679087493abc6038e5e1d5bf305aecf1f948[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: jade_ore <jaydenthejayden1009@gmail.com>
+Date:   Thu Jun 4 20:32:25 2026 -0500
+
+    add bin file
+
+[33mcommit afbc0646d57bd83f9d20499078739abf271ab83b[m
+Author: jade_ore <jaydenthejayden1009@gmail.com>
+Date:   Sun May 31 01:11:42 2026 -0500
+
+    made demo and updated readme
+
+[33mcommit f2084ca6456cbd5a9fc723a44a2d27193b354e5c[m
+Author: jade_ore <jaydenthejayden1009@gmail.com>
+Date:   Sun May 31 00:35:05 2026 -0500
+
+    add color changing and transformations
+
+[33mcommit f51ea7b01986e5ee919b0249c1214157e731bbc4[m
+Author: jade_ore <jaydenthejayden1009@gmail.com>
+Date:   Sat May 30 17:28:33 2026 -0500
+
+    add circles
+
+[33mcommit bbdeb4e427650fb3d1dd28cb678b86f4e1f6cbf6[m
+Author: jade_ore <jaydenthejayden1009@gmail.com>
+Date:   Sat May 30 13:58:22 2026 -0500
+
+    make camera class with transformation and zoom
+
+[33mcommit 5e208b1e05e1dde48a0810f32b495af8ffefef90[m
+Author: jade_ore <jaydenthejayden1009@gmail.com>
+Date:   Fri May 29 19:21:45 2026 -0500
+
+    make translations work
+
+[33mcommit 7fce3729477af42fe72dddefd73590efc4a37eca[m
+Author: jade_ore <jaydenthejayden1009@gmail.com>
+Date:   Fri May 29 19:16:29 2026 -0500
+
+    add triangles and quadrilaterals
+
+[33mcommit 335a53b49dd14035387c94ffc1b65eb621e2a0a8[m
+Author: jade_ore <jaydenthejayden1009@gmail.com>
+Date:   Thu May 28 19:42:25 2026 -0500
+
+    Add project files.
+
+[33mcommit 01d904fd271b35901863089eaaea57bbcd4a5fba[m
+Author: jade_ore <jaydenthejayden1009@gmail.com>
+Date:   Thu May 28 19:42:24 2026 -0500
+
+    Add .gitattributes, .gitignore, and README.md.

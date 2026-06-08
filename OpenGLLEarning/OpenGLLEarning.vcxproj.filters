@@ -18,10 +18,10 @@
     <ClCompile Include="shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\Code\OpenGLDependancies\Libs\src\glad.c">
+    <ClCompile Include="Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine.cpp">
+    <ClCompile Include="..\Dependancies\libs\src\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
